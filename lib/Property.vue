@@ -1,7 +1,6 @@
 <template>
   <!-- Hide const ? Or make a readonly field -->
   <div v-if="fullSchema && fullSchema.const === undefined && fullSchema['x-display'] !== 'hidden'" class="vjsf-property">
-
     <!-- Date picker -->
     <v-menu v-if="fullSchema.type === 'string' && ['date', 'date-time'].includes(fullSchema.format)" ref="menu" :close-on-content-click="false" v-model="menu"
             :nudge-right="40"
@@ -22,6 +21,8 @@
         :rules="rules"
         :clearable="!required"
         prepend-icon="event"
+        :hint="htmlDescription"
+        persistent-hint
         readonly>
         <v-tooltip v-if="fullSchema.description" slot="append-outer" left>
           <v-icon slot="activator">info</v-icon>
@@ -92,12 +93,10 @@
         :disabled="disabled"
         :clearable="!required"
         :multiple="fullSchema.type === 'array'"
+        :hint="htmlDescription"
+        persistent-hint
         @change="change"
         @input="input">
-        <v-tooltip v-if="fullSchema.description" slot="append-outer" left>
-          <v-icon slot="activator">info</v-icon>
-          <div class="vjsf-tooltip" v-html="htmlDescription" />
-        </v-tooltip>
       </v-select>
     </template>
 
@@ -115,12 +114,10 @@
               :multiple="fullSchema.type === 'array'"
               :item-text="itemTitle"
               :item-value="itemKey"
+              :hint="htmlDescription"
+              persistent-hint
               @change="change"
               @input="input">
-      <v-tooltip v-if="fullSchema.description" slot="append-outer" left>
-        <v-icon slot="activator">info</v-icon>
-        <div class="vjsf-tooltip" v-html="htmlDescription" />
-      </v-tooltip>
     </v-select>
 
     <!-- Select field on an ajax response or from an array in another part of the data -->
@@ -139,12 +136,10 @@
               :clearable="!required"
               :loading="loading"
               :multiple="fullSchema.type === 'array'"
+              :hint="htmlDescription"
+              persistent-hint
               @change="change"
               @input="input">
-      <v-tooltip v-if="fullSchema.description" slot="append-outer" left>
-        <v-icon slot="activator">info</v-icon>
-        <div class="vjsf-tooltip" v-html="htmlDescription" />
-      </v-tooltip>
     </v-select>
 
     <!-- auto-complete field on an ajax response with query -->
@@ -166,12 +161,10 @@
                     :placeholder="options.searchMessage"
                     :loading="loading"
                     :multiple="fullSchema.type === 'array'"
+                    :hint="htmlDescription"
+                    persistent-hint
                     @change="change"
                     @input="input">
-      <v-tooltip v-if="fullSchema.description" slot="append-outer" left>
-        <v-icon slot="activator">info</v-icon>
-        <div class="vjsf-tooltip" v-html="htmlDescription" />
-      </v-tooltip>
     </v-autocomplete>
 
     <!-- Long text field in a textarea -->
@@ -182,13 +175,11 @@
                 :disabled="disabled"
                 :required="required"
                 :rules="rules"
+                :hint="htmlDescription"
+                persistent-hint
                 box
                 @change="change"
                 @input="input">
-      <v-tooltip v-if="fullSchema.description" slot="append-outer" left>
-        <v-icon slot="activator">info</v-icon>
-        <div class="vjsf-tooltip" v-html="htmlDescription" />
-      </v-tooltip>
     </v-textarea>
 
     <!-- text field displayed as password -->
@@ -199,15 +190,20 @@
                   :disabled="disabled"
                   :required="required"
                   :rules="rules"
+                  :hint="htmlDescription"
                   type="password"
                   @change="change"
                   @input="input">
-      <v-tooltip v-if="fullSchema.description" slot="append-outer" left>
-        <v-icon slot="activator">info</v-icon>
-        <div class="vjsf-tooltip" v-html="htmlDescription" />
-      </v-tooltip>
     </v-text-field>
-
+    <!-- Computed text field -->
+    <v-text-field v-else-if="fullSchema.type === 'string' && fullSchema.contentMediaType == 'text/javascript'"
+                  v-model="modelWrapper[modelKey]"
+                  :name="fullKey"
+                  :label="label"
+                  :hint="htmlDescription"
+                  disabled
+                  persistent-hint>
+    </v-text-field>
     <!-- Simple text field -->
     <v-text-field v-else-if="fullSchema.type === 'string'"
                   v-model="modelWrapper[modelKey]"
@@ -216,12 +212,10 @@
                   :disabled="disabled"
                   :required="required"
                   :rules="rules"
+                  :hint="htmlDescription"
+                  persistent-hint
                   @change="change"
                   @input="input">
-      <v-tooltip v-if="fullSchema.description" slot="append-outer" left>
-        <v-icon slot="activator">info</v-icon>
-        <div class="vjsf-tooltip" v-html="htmlDescription" />
-      </v-tooltip>
     </v-text-field>
 
     <!-- Simple number fields -->
@@ -235,13 +229,11 @@
                   :disabled="disabled"
                   :required="required"
                   :rules="rules"
+                  :hint="htmlDescription"
+                  persistent-hint
                   type="number"
                   @change="change"
                   @input="input">
-      <v-tooltip v-if="fullSchema.description" slot="append-outer" left>
-        <v-icon slot="activator">info</v-icon>
-        <div class="vjsf-tooltip" v-html="htmlDescription" />
-      </v-tooltip>
     </v-text-field>
 
     <!-- Simple boolean field -->
@@ -252,12 +244,10 @@
                 :disabled="disabled"
                 :required="required"
                 :rules="rules"
+                :hint="htmlDescription"
+                persistent-hint
                 @change="change"
                 @input="input">
-      <v-tooltip v-if="fullSchema.description" slot="append" left>
-        <v-icon slot="activator">info</v-icon>
-        <div class="vjsf-tooltip" v-html="htmlDescription" />
-      </v-tooltip>
     </v-checkbox>
 
     <!-- Simple strings array -->
@@ -269,15 +259,14 @@
       :required="required"
       :rules="rules"
       :disabled="disabled"
+      :hint="htmlDescription"
+      persistent-hint
       chips
       multiple
       append-icon=""
       @change="change"
       @input="input">
-      <v-tooltip v-if="fullSchema.description" slot="append-outer" left>
-        <v-icon slot="activator">info</v-icon>
-        <div class="vjsf-tooltip" v-html="htmlDescription" />
-      </v-tooltip>
+    
       <template slot="selection" slot-scope="data">
         <v-chip
           :selected="data.selected"
@@ -292,10 +281,10 @@
     <!-- Object sub container with properties that may include a select based on a oneOf and subparts base on a allOf -->
     <div v-else-if="fullSchema.type === 'object'">
       <v-subheader v-if="fullSchema.title" :style="foldable ? 'cursor:pointer;' :'' " class="mt-2" @click="folded = !folded">
+        <v-icon v-if="foldable && folded">arrow_right</v-icon>
+        <v-icon v-if="foldable && !folded">arrow_drop_down</v-icon>
         {{ fullSchema.title }}
         &nbsp;
-        <v-icon v-if="foldable && folded">arrow_drop_down</v-icon>
-        <v-icon v-if="foldable && !folded">arrow_drop_up</v-icon>
       </v-subheader>
 
       <v-slide-y-transition>
@@ -366,14 +355,12 @@
               :required="oneOfRequired"
               :clearable="!oneOfRequired"
               :rules="oneOfRules"
+              :hint="htmlDescription"
+              persistent-hint
               item-text="title"
               return-object
               @change="change"
               @input="input">
-              <v-tooltip v-if="oneOfConstProp && oneOfConstProp.description" slot="append-outer" left>
-                <v-icon slot="activator">info</v-icon>
-                <div class="vjsf-tooltip" v-html="oneOfConstProp.htmlDescription"/>
-              </v-tooltip>
             </v-select>
             <!--{{ currentOneOf }}-->
             <template v-if="currentOneOf && showCurrentOneOf">
@@ -438,7 +425,6 @@
             <v-flex v-for="(itemModel, i) in modelWrapper[modelKey]" :key="i" xs12>
               <v-card class="array-card">
                 <v-card-text>
-
                   <property :schema="fullSchema.items"
                             :model-wrapper="modelWrapper[modelKey]"
                             :model-root="modelRoot"
@@ -463,9 +449,7 @@
           </draggable>
         </v-layout>
       </v-container>
-
     </div>
-
     <p v-else-if="options.debug">Unsupported type "{{ fullSchema.type }}" - {{ fullSchema }}</p>
   </div>
 </template>
@@ -495,7 +479,7 @@ export default {
   },
   computed: {
     fullSchema() {
-      // console.log('Re process full schema')
+      console.log('Re process full schema')
       const fullSchema = JSON.parse(JSON.stringify(this.schema))
 
       if (fullSchema.type !== 'object') return fullSchema

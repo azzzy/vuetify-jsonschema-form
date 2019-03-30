@@ -12,6 +12,13 @@ module.exports = {
         type: 'string',
         const: 'person'
       },
+      'formula': {
+        type: 'string',
+        title: 'Herd size according to the latest MPR',
+        description: 'Including the heifers. See the Sustainability monitor in the management program for this',
+        'x-formula': 'companyDetails.herdSize + companyDetails.animalsIntroducedPastYear - companyDetails.animalsCulledPastYear',
+        contentMediaType: 'text/javascript'
+      },
       'firstName': {
         'type': 'string',
         'description': `
@@ -60,6 +67,7 @@ This description can be a long text with markdown content.
     }
   },
   data: {
+    'formula': '123123123',
     'firstName': 'John',
     'lastName': 'Doe',
     'age': 21
