@@ -19,6 +19,7 @@
         :name="fullKey"
         :required="required"
         :rules="rules"
+        :disabled="disabled"
         :clearable="!required"
         prepend-icon="event"
         :hint="htmlDescription"
