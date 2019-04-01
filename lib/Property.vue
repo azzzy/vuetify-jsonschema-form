@@ -37,7 +37,7 @@
     </v-menu>
 
     <!-- Color picking -->
-    <template v-if="fullSchema.format === 'hexcolor'">
+    <template v-else-if="fullSchema.format === 'hexcolor'">
       <template v-if="fullSchema['x-display'] === 'color-picker'">
         <v-input
           :name="fullKey"
@@ -97,6 +97,7 @@
         persistent-hint
         @change="change"
         @input="input">
+        suffix="Aiming to: 123"
       </v-select>
     </template>
 
@@ -479,7 +480,6 @@ export default {
   },
   computed: {
     fullSchema() {
-      console.log('Re process full schema')
       const fullSchema = JSON.parse(JSON.stringify(this.schema))
 
       if (fullSchema.type !== 'object') return fullSchema
