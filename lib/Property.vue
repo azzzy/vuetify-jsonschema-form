@@ -232,8 +232,8 @@
                   @input="input">
     </v-text-field>
     <!-- Computed text field -->
-    <v-text-field v-else-if="fullSchema.type === 'string' && fullSchema['x-formula']"
-                  v-model="modelWrapper[modelKey]"
+    <v-text-field v-else-if="fullSchema.type === 'integer' && fullSchema['x-formula']"
+                  v-model.number="modelWrapper[modelKey]"
                   :name="fullKey"
                   :label="label"
                   :hint="htmlDescription"
