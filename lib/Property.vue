@@ -232,7 +232,7 @@
                   @input="input">
     </v-text-field>
     <!-- Computed text field -->
-    <v-text-field v-else-if="fullSchema.type === 'integer' && fullSchema['x-formula']"
+    <v-text-field v-else-if="(fullSchema.type === 'integer' || fullSchema.type === 'number') && fullSchema['x-formula']"
                   v-model.number="modelWrapper[modelKey]"
                   :name="fullKey"
                   :label="label"
