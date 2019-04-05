@@ -39,10 +39,15 @@ This description can be a long text with markdown content.
         'x-display': 'password'
       },
       'age': {
-        'description': 'Age in years which must be equal to or greater than zero.',
+        'description': 'Age in years which must be equal',
         'type': 'integer',
         'minimum': 0,
         maximum: 150
+      },
+      'ageInMonths': {
+        'type': 'integer',
+        'description': 'Age in months',
+        'format': 'months'
       },
       'internalKey': {
         'description': 'A property managed only internally by programs and hidden from user',
@@ -70,6 +75,7 @@ This description can be a long text with markdown content.
     'formula': '123123123',
     'firstName': 'John',
     'lastName': 'Doe',
-    'age': 21
+    'age': 21,
+    ageInMonths: 123
   }
 }

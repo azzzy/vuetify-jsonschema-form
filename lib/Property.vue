@@ -36,6 +36,42 @@
         <v-btn flat color="primary" @click="$refs.menu.save(modelWrapper[modelKey]); change(); input()">OK</v-btn>
       </v-date-picker>
     </v-menu>
+     <!-- month -->
+    <template  v-else-if="fullSchema.type === 'integer' && fullSchema.format == 'months'">
+      <v-layout row>
+        <v-flex  xs6>
+          <v-text-field
+                  v-model="years"
+                  :label="label"
+                  :required="required"
+                  min="0"
+                  max="20"
+                  :rules="rules"
+                  suffix="jaar"
+                  format="number"
+                  maxlength="2"
+                  @change="change"
+                  @input="input">
+          </v-text-field>
+        </v-flex>
+        <v-flex  xs6>
+          <v-text-field
+                xs6
+                v-model="months"
+                :disabled="disabled"
+                :required="required"
+                :rules="rules"
+                min="0"
+                max="11"
+                single-line
+                suffix="maanden"
+                maxlength="2"
+                @change="change"
+                @input="input">
+          </v-text-field>
+        </v-flex>
+      </v-layout>
+    </template>
 
     <!-- Color picking -->
     <template v-else-if="fullSchema.format === 'hexcolor'">
@@ -80,8 +116,7 @@
       </v-input>
     </template>
 
-    <!-- Select field based on an enum (array or simple value) -->
-    <template v-else-if="(fullSchema.type === 'array' && fullSchema.items.enum) || fullSchema.enum">
+      <template v-else-if="(fullSchema.type === 'array' && fullSchema.items.enum) || fullSchema.enum">
       <!--{{ selectItems }}<br>
       {{ modelWrapper[modelKey] }}-->
       <v-select
@@ -98,9 +133,9 @@
         persistent-hint
         @change="change"
         @input="input">
-        suffix="Aiming to: 123"
       </v-select>
     </template>
+
 
     <!-- Select field based on a oneOf on a simple type (array or simple value) -->
     <!-- cf https://github.com/mozilla-services/react-jsonfullSchema-form/issues/532 -->
@@ -189,8 +224,7 @@
                   v-model="modelWrapper[modelKey]"
                   :name="fullKey"
                   :label="label"
-                  :disabled="disabled"
-                  :required="required"
+                 mini
                   :rules="rules"
                   :hint="htmlDescription"
                   type="password"
@@ -205,6 +239,19 @@
                   :hint="htmlDescription"
                   disabled
                   persistent-hint>
+    </v-text-field>
+
+    <v-text-field v-else-if="fullSchema.type === 'string'"
+                  v-model="modelWrapper[modelKey]"
+                  :name="fullKey"
+                  :label="label"
+                  :disabled="disabled"
+                  :required="required"
+                  :rules="rules"
+                  :hint="htmlDescription"
+                  persistent-hint
+                  @change="change"
+                  @input="input">
     </v-text-field>
     <!-- Simple text field -->
     <v-text-field v-else-if="fullSchema.type === 'string'"
@@ -348,7 +395,6 @@
           <!-- Sub container with a select for oneOfs -->
           <template v-if="fullSchema.oneOf">
             <v-select
-
               :items="fullSchema.oneOf"
               v-model="currentOneOf"
               :disabled="disabled"
@@ -480,6 +526,41 @@ export default {
     }
   },
   computed: {
+    years: {
+      get(){
+        return Math.floor(this.modelWrapper[this.modelKey] / 12)
+      }, 
+      set(value) {
+        if(value.trim() == "") value = 0
+
+        if(!(/^\d+$/.test(value))) {
+          let oldValue = this.modelWrapper[this.modelKey] + 0
+          this.modelWrapper[this.modelKey] = undefined
+          this.$nextTick(() => {
+            this.modelWrapper[this.modelKey] = oldValue
+          })
+        } else {
+           this.modelWrapper[this.modelKey] = parseInt(value) * 12 + this.months
+        }
+      }
+    },
+     months: {
+      get(){
+        return this.modelWrapper[this.modelKey] % 12
+      }, 
+      set(value) {
+        if(value.trim() == "") value = 0
+        if(!(/^\d+$/.test(value)) || value > 11) {
+          let oldValue = this.modelWrapper[this.modelKey] + 0
+           this.modelWrapper[this.modelKey] = undefined
+          this.$nextTick(() => {
+			      this.modelWrapper[this.modelKey] = oldValue
+		      })
+        } else {
+           this.modelWrapper[this.modelKey] = this.years * 12 + parseInt(value)
+        }
+      }
+    },
     fullSchema() {
       const fullSchema = JSON.parse(JSON.stringify(this.schema))
 
