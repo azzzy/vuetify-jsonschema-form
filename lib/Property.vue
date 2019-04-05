@@ -232,26 +232,14 @@
                   @input="input">
     </v-text-field>
     <!-- Computed text field -->
-    <v-text-field v-else-if="fullSchema.type === 'string' && fullSchema.contentMediaType == 'text/javascript'"
+    <v-text-field v-else-if="fullSchema.type === 'string' && fullSchema['x-formula']"
                   v-model="modelWrapper[modelKey]"
                   :name="fullKey"
                   :label="label"
                   :hint="htmlDescription"
+                  :append-icon="fullSchema['x-icon']"
                   disabled
                   persistent-hint>
-    </v-text-field>
-
-    <v-text-field v-else-if="fullSchema.type === 'string'"
-                  v-model="modelWrapper[modelKey]"
-                  :name="fullKey"
-                  :label="label"
-                  :disabled="disabled"
-                  :required="required"
-                  :rules="rules"
-                  :hint="htmlDescription"
-                  persistent-hint
-                  @change="change"
-                  @input="input">
     </v-text-field>
     <!-- Simple text field -->
     <v-text-field v-else-if="fullSchema.type === 'string'"
@@ -262,6 +250,7 @@
                   :required="required"
                   :rules="rules"
                   :hint="htmlDescription"
+                  :append-icon="fullSchema['x-icon']"
                   persistent-hint
                   @change="change"
                   @input="input">
@@ -279,6 +268,7 @@
                   :required="required"
                   :rules="rules"
                   :hint="htmlDescription"
+                  :append-icon="fullSchema['x-icon']"
                   persistent-hint
                   type="number"
                   @change="change"
@@ -294,6 +284,7 @@
                 :required="required"
                 :rules="rules"
                 :hint="htmlDescription"
+                :append-icon="fullSchema['x-icon']"
                 persistent-hint
                 @change="change"
                 @input="input">
@@ -312,7 +303,7 @@
       persistent-hint
       chips
       multiple
-      append-icon=""
+      :append-icon="fullSchema['x-icon']"
       @change="change"
       @input="input">
     
@@ -532,7 +523,6 @@ export default {
       }, 
       set(value) {
         if(value.trim() == "") value = 0
-
         if(!(/^\d+$/.test(value))) {
           let oldValue = this.modelWrapper[this.modelKey] + 0
           this.modelWrapper[this.modelKey] = undefined
