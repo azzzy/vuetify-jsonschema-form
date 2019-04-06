@@ -37,7 +37,7 @@
       </v-date-picker>
     </v-menu>
      <!-- month -->
-    <template  v-else-if="fullSchema.type === 'integer' && fullSchema.format == 'months'">
+    <template  v-else-if="(fullSchema.type === 'integer' || fullSchema.type === 'number') && fullSchema.format == 'months'">
       <v-layout row>
         <v-flex  xs6>
           <v-text-field
