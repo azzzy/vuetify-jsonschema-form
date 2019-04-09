@@ -44,6 +44,7 @@
                   v-model="years"
                   :label="label"
                   :required="required"
+                  :disabled="disabled"
                   min="0"
                   max="20"
                   :rules="rules"
