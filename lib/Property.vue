@@ -133,7 +133,7 @@
         :hint="htmlDescription"
         persistent-hint
         @change="change"
-        @input="input">
+        @input="change">
       </v-select>
     </template>
 
@@ -155,7 +155,7 @@
               :hint="htmlDescription"
               persistent-hint
               @change="change"
-              @input="input">
+              @input="change">
     </v-select>
 
     <!-- Select field on an ajax response or from an array in another part of the data -->
@@ -177,7 +177,7 @@
               :hint="htmlDescription"
               persistent-hint
               @change="change"
-              @input="input">
+              @input="change">
     </v-select>
 
     <!-- auto-complete field on an ajax response with query -->
@@ -202,7 +202,7 @@
                     :hint="htmlDescription"
                     persistent-hint
                     @change="change"
-                    @input="input">
+                    @input="change">
     </v-autocomplete>
 
     <!-- Long text field in a textarea -->
