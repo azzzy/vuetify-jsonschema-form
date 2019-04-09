@@ -239,6 +239,7 @@
                   :hint="htmlDescription"
                   :append-icon="fullSchema['x-icon']"
                   disabled
+                  prepend-icon="fa-calculator"
                   persistent-hint>
     </v-text-field>
     <!-- Simple text field -->
