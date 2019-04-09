@@ -521,7 +521,8 @@ export default {
   computed: {
     years: {
       get(){
-        return Math.floor(this.modelWrapper[this.modelKey] / 12)
+        cost years = Math.floor(this.modelWrapper[this.modelKey] / 12)
+        return  isNaN(years) ? 0 : years
       }, 
       set(value) {
         if(value.trim() == "") value = 0
@@ -538,7 +539,8 @@ export default {
     },
      months: {
       get(){
-        return this.modelWrapper[this.modelKey] % 12
+        const months = this.modelWrapper[this.modelKey] % 12
+        return isNaN(months) ? 0 : months
       }, 
       set(value) {
         if(value.trim() == "") value = 0
