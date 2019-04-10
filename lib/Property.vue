@@ -271,8 +271,9 @@
                   :rules="rules"
                   :hint="htmlDescription"
                   :append-icon="fullSchema['x-icon']"
+                  :prepend-icon="(fullSchema.format === 'euro' ? 'fa-euro-sign': '')"
                   persistent-hint
-                  type="number"
+                  @keydown ="onNumbersKeyDown"
                   @change="change"
                   @input="input">
     </v-text-field>
@@ -521,7 +522,7 @@ export default {
   computed: {
     years: {
       get(){
-        cost years = Math.floor(this.modelWrapper[this.modelKey] / 12)
+        const years = Math.floor(this.modelWrapper[this.modelKey] / 12)
         return  isNaN(years) ? 0 : years
       }, 
       set(value) {
@@ -533,7 +534,8 @@ export default {
             this.modelWrapper[this.modelKey] = oldValue
           })
         } else {
-           this.modelWrapper[this.modelKey] = parseInt(value) * 12 + this.months
+           const years = parseInt(value) * 12 + this.months
+           this.modelWrapper[this.modelKey] = isNaN(years) ? 0 : years
         }
       }
     },
@@ -551,7 +553,8 @@ export default {
 			      this.modelWrapper[this.modelKey] = oldValue
 		      })
         } else {
-           this.modelWrapper[this.modelKey] = this.years * 12 + parseInt(value)
+           const months = this.years * 12 + parseInt(value)
+           this.modelWrapper[this.modelKey] = isNaN(months) ? 0 : months
         }
       }
     },
@@ -757,6 +760,15 @@ export default {
       // we check for actual differences in order to prevent infinite loops
       if (JSON.stringify(selectItems) !== JSON.stringify(this.selectItems)) {
         this.selectItems = selectItems
+      }
+    },
+    onNumbersKeyDown(evt) {
+      if( evt.key.length != 1 || evt.altKey || evt.ctrlKey || evt.metaKey) return
+      
+      if(evt.key.match(/[^0-9,]/) ||
+      (evt.key == ',' && (this.fullSchema.type === 'integer' || evt.target.value.includes(',')))) {
+        evt.preventDefault()
+        evt.stopPropagation()
       }
     },
     change() {

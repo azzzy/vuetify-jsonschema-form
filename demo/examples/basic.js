@@ -42,7 +42,13 @@ This description can be a long text with markdown content.
         'description': 'Age in years which must be equal',
         'type': 'integer',
         'minimum': 0,
-        maximum: 150
+        'maximum': 150
+      },
+      weight: {
+        'description': 'Age in years which must be equal',
+        'type': 'number',
+        'minimum': 0,
+        'maximum': 500
       },
       'ageInMonths': {
         'type': 'integer',
@@ -55,8 +61,8 @@ This description can be a long text with markdown content.
         'x-display': 'hidden'
       },
       citizen: {
-        description: 'Is this person a citizen of this country.',
-        type: 'boolean'
+        'description': 'Is this person a citizen of this country.',
+        'type': 'boolean'
       },
       'description': {
         'description': 'A longer text for the description.',
