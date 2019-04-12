@@ -587,7 +587,7 @@ export default {
         if(isNaN(value)) {
           this.$set(this.modelWrapper, this.modelKey, parseInt(value.toString().replace(/\D/g,'')))
         } else {
-          this.$set(this.modelWrapper, this.modelKey, this.modelWrapper[this.modelKey], parseInt(value))
+          this.$set(this.modelWrapper, this.modelKey, parseInt(value))
         }
       }
     }
@@ -830,6 +830,7 @@ export default {
       }
     },
     change() {
+      console.log(this.modelWrapper[this.modelKey])
       this.updateSelectItems()
       this.$emit('change', {key: this.fullKey.replace(/allOf-([0-9]+)\./g, ''), model: this.modelWrapper[this.modelKey]})
     },
