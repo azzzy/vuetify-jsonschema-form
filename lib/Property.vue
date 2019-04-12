@@ -262,6 +262,8 @@
     <!-- Simple number fields -->
     <v-text-field v-else-if="fullSchema.type === 'integer'"
                   v-model="integerValue"
+                  pattern="[0-9,]*"
+                  inputmode="numeric"
                   :name="fullKey"
                   :label="label"
                   :min="fullSchema.minimum"
@@ -281,6 +283,8 @@
 
     <v-text-field v-else-if="fullSchema.type === 'number'"
                   v-model="numberValue"
+                  pattern="[0-9,]*"
+                  inputmode="numeric"
                   :name="fullKey"
                   :label="label"
                   :min="fullSchema.minimum"
@@ -812,22 +816,36 @@ export default {
       this.modelWrapper[this.modelKey] = txt.replace('.', ',').replace(/[^0-9,]/g, '')
       evt.preventDefault()
       return false
-    },
-    onkyeup(){
-      console.log(document.getSelection())
     }
     , onNumbersKeyDown(evt) {
-      if(evt.key.length != 1 || evt.altKey || evt.ctrlKey || evt.metaKey) return
-      else if(evt.key.match(/[^0-9,.]/g)) {
-        evt.preventDefault()
-        evt.stopPropagation()
-      } else if((evt.key == ',' || evt.key == '.') && (this.fullSchema.type === 'integer' || evt.target.value.includes(','))) {
-        evt.preventDefault()
-        evt.stopPropagation()
-      } else if(evt.key == '.') {
-        console.log(document.getSelection())
-        evt.preventDefault()
+      var language = window.navigator.userLanguage || window.navigator.language
+      const field = evt.target
+      if(evt.key.length != 1 || evt.altKey || evt.ctrlKey || evt.metaKey) return true
+      if(evt.key.match(/[0-9]/g)) return true
+      
+      if(evt.key == ',' || evt.key == '.') {
+        if(this.fullSchema.type === 'integer' ||
+          (field.value.includes(',') && !field.value.slice(field.selectionStart, field.selectionEnd).includes(","))
+        ) {
+          evt.stopPropagation()
+          evt.preventDefault()
+          return true
+        }
+        if(evt.key == ',') {
+          return true
+        } else if(evt.key == '.') {
+          const txt = field.value
+          let selStart = field.selectionStart
+          let selEnd = field.selectionEnd
+          field.value = txt.substring(0, selStart) + ',' + txt.substring(selEnd)
+          field.setSelectionRange(selStart+1, selStart+1)
+        }
       }
+      evt.stopPropagation()
+      evt.preventDefault()
+      // if((field.match(/[,]/g) || []).length > 0) {
+      //   field.value = 
+      // }
     },
     change() {
       console.log(this.modelWrapper[this.modelKey])
