@@ -1,4 +1,11 @@
 
+.vjsf-property {
+  display: flex;
+}
+.vjsf-property > p {
+  padding-right: 10px;
+  width: 100px;
+}
 .vjsf-property .array-card .v-card__text {
   padding: 6px 16px 0 16px;
 }
