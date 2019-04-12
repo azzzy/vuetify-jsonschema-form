@@ -1,6 +1,7 @@
 <template>
   <!-- Hide const ? Or make a readonly field -->
-  <div v-if="fullSchema && fullSchema.const === undefined && fullSchema['x-display'] !== 'hidden'" class="vjsf-property">
+  <div v-if="fullSchema && fullSchema.const === undefined && fullSchema['x-display'] !== 'none' && fullSchema['x-display'] !== 'hidden'" class="vjsf-property">
+    <div class="prepend" v-if="fullSchema.prepend" v-html="fullSchema.prepend"></div>
     <!-- Date picker -->
     <v-menu v-if="fullSchema.type === 'string' && ['date', 'date-time'].includes(fullSchema.format)" ref="menu" :close-on-content-click="false" v-model="menu"
             :nudge-right="40"
@@ -234,7 +235,7 @@
     </v-text-field>
     <!-- Computed text field -->
     <v-text-field v-else-if="(fullSchema.type === 'integer' || fullSchema.type === 'number') && fullSchema['x-formula']"
-                  v-model.number="modelWrapper[modelKey]"
+                  v-model="modelWrapper[modelKey]"
                   :name="fullKey"
                   :label="label"
                   :hint="htmlDescription"
@@ -259,21 +260,41 @@
     </v-text-field>
 
     <!-- Simple number fields -->
-    <v-text-field v-else-if="fullSchema.type === 'number' || fullSchema.type === 'integer'"
-                  v-model.number="modelWrapper[modelKey]"
+    <v-text-field v-else-if="fullSchema.type === 'integer'"
+                  v-model="integerValue"
                   :name="fullKey"
                   :label="label"
                   :min="fullSchema.minimum"
                   :max="fullSchema.maximum"
-                  :step="fullSchema.type === 'integer' ? 1 : 0.01"
                   :disabled="disabled"
                   :required="required"
                   :rules="rules"
                   :hint="htmlDescription"
                   :append-icon="fullSchema['x-icon']"
-                  :prepend-icon="(fullSchema.format === 'euro' ? 'fa-euro-sign': '')"
+                  :prepend-inner-icon="(fullSchema.format === 'euro' ? 'fa-euro-sign': '')"
                   persistent-hint
-                  @keydown ="onNumbersKeyDown"
+                  autocomplete="never"
+                  @keydown="onNumbersKeyDown"
+                  @change="change"
+                  @input="input">
+    </v-text-field>
+
+    <v-text-field v-else-if="fullSchema.type === 'number'"
+                  v-model="numberValue"
+                  :name="fullKey"
+                  :label="label"
+                  :min="fullSchema.minimum"
+                  :max="fullSchema.maximum"
+                  :disabled="disabled"
+                  :required="required"
+                  :rules="rules"
+                  :hint="htmlDescription"
+                  :append-icon="fullSchema['x-icon']"
+                  :prepend-inner-icon="(fullSchema.format === 'euro' ? 'fa-euro-sign': '')"
+                  persistent-hint
+                  autocomplete="never"
+                  @keydown="onNumbersKeyDown"
+                  @paste="onNumbersPaste"
                   @change="change"
                   @input="input">
     </v-text-field>
@@ -558,7 +579,31 @@ export default {
         }
       }
     },
-    fullSchema() {
+    integerValue: {
+      get(){
+        return this.modelWrapper[this.modelKey] || this.modelWrapper[this.modelKey] === 0 ? parseInt(this.modelWrapper[this.modelKey]) : ''
+      },
+      set(value) {
+        if(isNaN(value)) {
+          this.$set(this.modelWrapper, this.modelKey, parseInt(value.toString().replace(/\D/g,'')))
+        } else {
+          this.$set(this.modelWrapper, this.modelKey, this.modelWrapper[this.modelKey], parseInt(value))
+        }
+      }
+    }
+    , numberValue: {
+      get(){
+        return this.modelWrapper[this.modelKey] || this.modelWrapper[this.modelKey] === 0 ? this.modelWrapper[this.modelKey].toString().replace('.', ',') : ''
+      },
+      set(value) {
+        if(isNaN(value)) {
+          this.$set(this.modelWrapper, this.modelKey,  Number(value.toString().replace(',', '.').replace(/\D[\.]/g,'')))
+        } else {
+          this.$set(this.modelWrapper, this.modelKey, Number(value))
+        }
+      }
+    }
+    , fullSchema() {
       const fullSchema = JSON.parse(JSON.stringify(this.schema))
 
       if (fullSchema.type !== 'object') return fullSchema
@@ -762,13 +807,26 @@ export default {
         this.selectItems = selectItems
       }
     },
-    onNumbersKeyDown(evt) {
-      if( evt.key.length != 1 || evt.altKey || evt.ctrlKey || evt.metaKey) return
-      
-      if(evt.key.match(/[^0-9,]/) ||
-      (evt.key == ',' && (this.fullSchema.type === 'integer' || evt.target.value.includes(',')))) {
+    onNumbersPaste(evt) {
+      const txt = evt.clipboardData.getData("text/plain")
+      this.modelWrapper[this.modelKey] = txt.replace('.', ',').replace(/[^0-9,]/g, '')
+      evt.preventDefault()
+      return false
+    },
+    onkyeup(){
+      console.log(document.getSelection())
+    }
+    , onNumbersKeyDown(evt) {
+      if(evt.key.length != 1 || evt.altKey || evt.ctrlKey || evt.metaKey) return
+      else if(evt.key.match(/[^0-9,.]/g)) {
         evt.preventDefault()
         evt.stopPropagation()
+      } else if((evt.key == ',' || evt.key == '.') && (this.fullSchema.type === 'integer' || evt.target.value.includes(','))) {
+        evt.preventDefault()
+        evt.stopPropagation()
+      } else if(evt.key == '.') {
+        console.log(document.getSelection())
+        evt.preventDefault()
       }
     },
     change() {
@@ -777,6 +835,9 @@ export default {
     },
     input() {
       this.$emit('input', {key: this.fullKey.replace(/allOf-([0-9]+)\./g, ''), model: this.modelWrapper[this.modelKey]})
+    },
+    numbersInput(evt) {
+      console.log(evt.target)
     },
     getDeepKey(obj, key) {
       const keys = key.split('.')
@@ -923,6 +984,13 @@ export default {
 </script>
 
 <style lang="css">
+.vjsf-property {
+  display: flex;
+}
+.vjsf-property > p {
+  padding-right: 10px;
+  width: 100px;
+}
 .vjsf-property .array-card .v-card__text {
   padding: 6px 16px 0 16px;
 }

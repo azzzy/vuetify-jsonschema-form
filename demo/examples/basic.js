@@ -48,7 +48,8 @@ This description can be a long text with markdown content.
         'description': 'Age in years which must be equal',
         'type': 'number',
         'minimum': 0,
-        'maximum': 500
+        'maximum': 500,
+        'prepend': '<p>asdasd</p><p>asdasdasd<b>sdasd</b></p>'
       },
       'ageInMonths': {
         'type': 'integer',
@@ -81,7 +82,8 @@ This description can be a long text with markdown content.
     'formula': '123123123',
     'firstName': 'John',
     'lastName': 'Doe',
-    'age': 21,
+    'age': 21.12,
+    'weight': 12.245,
     ageInMonths: 123
   }
 }
