@@ -31,7 +31,10 @@
           <div class="vjsf-tooltip" v-html="htmlDescription" />
         </v-tooltip>
       </v-text-field>
-      <v-date-picker v-model="modelWrapper[modelKey]" no-title scrollable>
+      <v-date-picker v-model="modelWrapper[modelKey]"
+        :first-day-of-week="1"
+        locale="nl"
+        no-title scrollable>
         <v-spacer/>
         <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
         <v-btn flat color="primary" @click="$refs.menu.save(modelWrapper[modelKey]); change(); input()">OK</v-btn>
