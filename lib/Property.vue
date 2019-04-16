@@ -34,10 +34,8 @@
       <v-date-picker v-model="modelWrapper[modelKey]"
         :first-day-of-week="1"
         locale="nl"
+        @input="$refs.menu.save(modelWrapper[modelKey]); change(); input()"
         no-title scrollable>
-        <v-spacer/>
-        <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
-        <v-btn flat color="primary" @click="$refs.menu.save(modelWrapper[modelKey]); change(); input()">OK</v-btn>
       </v-date-picker>
     </v-menu>
      <!-- month -->
