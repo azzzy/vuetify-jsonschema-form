@@ -235,7 +235,7 @@
     </v-text-field>
     <!-- Computed text field -->
     <v-text-field v-else-if="(fullSchema.type === 'integer' || fullSchema.type === 'number') && fullSchema['x-formula']"
-                  v-model="modelWrapper[modelKey]"
+                  v-model="computedValue"
                   :name="fullKey"
                   :label="label"
                   :hint="htmlDescription"
@@ -582,6 +582,12 @@ export default {
            this.modelWrapper[this.modelKey] = isNaN(months) ? 0 : months
         }
       }
+    },
+    computedValue() {
+      const value = this.modelWrapper[this.modelKey]
+      if(value === null || value === undefined) return ''
+      if(this.fullSchema.type === 'integer') return Math.round(Number(value)).toFixed(0)
+      return Number(value).toFixed(2).replace('.', ',')
     },
     integerValue: {
       get(){
