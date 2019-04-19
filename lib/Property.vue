@@ -1,7 +1,6 @@
 <template>
   <!-- Hide const ? Or make a readonly field -->
   <div v-if="fullSchema && fullSchema.const === undefined && fullSchema['x-display'] !== 'none' && fullSchema['x-display'] !== 'hidden'" class="vjsf-property">
-    <div class="prepend" v-if="fullSchema.prepend" v-html="fullSchema.prepend"></div>
     <!-- Date picker -->
     <v-menu v-if="fullSchema.type === 'string' && ['date', 'date-time'].includes(fullSchema.format)" ref="menu" :close-on-content-click="false" v-model="menu"
             :nudge-right="40"
@@ -519,6 +518,9 @@
       </v-container>
     </div>
     <p v-else-if="options.debug">Unsupported type "{{ fullSchema.type }}" - {{ fullSchema }}</p>
+    <div class="target" v-if="!['none', 'hidden'].includes(fullSchema['x-display']) && options.targets && options.targets[fullKey]">
+      {{options.targets[fullKey]}}
+    </div>
   </div>
 </template>
 

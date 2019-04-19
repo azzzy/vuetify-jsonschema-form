@@ -38,7 +38,7 @@
                 v-if="schema"
                 :schema="schema"
                 :model="dataObject"
-                :options="{debug: true, disableAll: false, autoFoldObjects: true, context: {owner: {type: 'organization', id: '5a5dc47163ebd4a6f438589b'}}, accordionMode: 'normal'}"
+                :options="{debug: true, targets: {'formula': '12'}, disableAll: false, autoFoldObjects: true, context: {owner: {type: 'organization', id: '5a5dc47163ebd4a6f438589b'}}, accordionMode: 'normal'}"
                 @error="e => window.alert(e)"
                 @change="change"
                 @input="input" />

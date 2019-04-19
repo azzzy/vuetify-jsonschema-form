@@ -20,7 +20,7 @@ import colors from './colors'
 export default {
   name: 'VJsonschemaForm',
   components: {Property},
-  props: ['schema', 'model', 'options'],
+  props: ['schema', 'model', 'options', 'targets'],
   data() {
     return {modelWrapper: {root: this.model}}
   },
@@ -36,6 +36,7 @@ export default {
         disableAll: false,
         colors,
         autoFoldObjects: false,
+        targets: null,
         requiredMessage: 'This information is required',
         noDataMessage: 'No matching value found',
         searchMessage: 'Search...'
