@@ -519,7 +519,7 @@
     </div>
     <p v-else-if="options.debug">Unsupported type "{{ fullSchema.type }}" - {{ fullSchema }}</p>
     <div class="target" v-if="!['none', 'hidden'].includes(fullSchema['x-display']) && options.targets && options.targets[fullKey]">
-      {{options.targets[fullKey]}}
+      {{formatedTargetValue}}
     </div>
   </div>
 </template>
@@ -591,6 +591,22 @@ export default {
       if(value === null || value === undefined) return ''
       if(this.fullSchema.type === 'integer') return Math.round(Number(value)).toFixed(0)
       return Number(value).toFixed(2).replace('.', ',')
+    },
+    formatedTargetValue() {
+      if(!this.options.targets.hasOwnProperty(this.fullKey)) return ''
+      const value = this.options.targets[this.fullKey]
+      if(this.fullSchema['x-formula']) {
+        if(value === null || value === undefined) return ''
+        if(this.fullSchema.type === 'integer') return Math.round(Number(value)).toFixed(0)
+        return Number(value).toFixed(2).replace('.', ',')
+      }
+
+      if(this.fullSchema.format == 'months') {
+        const years = Math.floor(Number(value) / 12)
+        const months = Number(value) % 12
+        return `${years}j ${months}m`
+      }
+      return value
     },
     integerValue: {
       get(){
